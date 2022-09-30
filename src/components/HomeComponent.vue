@@ -3,15 +3,33 @@ import { ref } from 'vue';
 import { useBook } from '../hooks/useBook';
 import Book from '../models/Book';
 
-const { getBooks } = useBook();
+const { getBooks, createBook } = useBook();
 const option = ref('');
 const books = ref([] as Book[]);
+const newBook = ref({
+  name:   '',
+  author: '',
+  bookshelfId: 1,
+  customerId: null
+});
 
 const listBooks = async() => {
   option.value = 'list';
   const { ok, data } = await getBooks();
-  if (ok) {
-    books.value = data;
+  if ( ok ) books.value = data;
+}
+
+const saveNewBook = async() => {
+  const bookToSave = newBook.value;
+  const { ok, message } = await createBook(newBook.value);
+  if ( ok ) {
+    books.value.push( bookToSave );
+    newBook.value = {
+      name:   '',
+      author: '',
+      bookshelfId: 1,
+      customerId: null
+    };
   }
 }
 
@@ -47,6 +65,14 @@ const listBooks = async() => {
         Delete book
       </button>
     </div>
+    <div class="col">
+      <button
+        type="button"
+        class="btn btn-secondary"
+      >
+        Logout
+      </button>
+    </div>
   </div>
   <div class="row mt-3">
     <div v-if="option==='list'">
@@ -57,7 +83,19 @@ const listBooks = async() => {
       </ul>
     </div>
     <div v-else-if="option==='new'">
-      <p>new</p>
+      <form @submit.prevent="saveNewBook" autocomplete="off">
+        <div class="form-group mt-2">
+          <label for="name">Title</label>
+          <input type="name" class="form-control" id="name" v-model="newBook.name" />
+        </div>
+        <div class="form-group mt-2">
+          <label for="author">Author</label>
+          <input type="author" class="form-control" id="password" v-model="newBook.author" />
+        </div>
+        <div class="mt-2">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
     <div v-else-if="option==='delete'">
       <p>delete</p>

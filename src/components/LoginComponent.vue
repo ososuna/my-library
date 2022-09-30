@@ -29,7 +29,7 @@ const onSubmit = async() => {
   <div>
     <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="form-group mt-2">
-        <label for="username">Email</label>
+        <label for="email">Email</label>
         <input type="email" class="form-control" id="email" v-model="loginRequest.email" />
       </div>
       <div class="form-group mt-2">
